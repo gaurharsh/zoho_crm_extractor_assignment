@@ -1,0 +1,18 @@
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+
+export default defineConfig({
+  plugins: [react()],
+  build: {
+    rollupOptions: {
+      input: {
+        popup: "src/popup/main.jsx"
+      },
+      output: {
+        entryFileNames: "popup.js"
+      }
+    },
+    outDir: "dist",
+    emptyOutDir: true
+  }
+});
