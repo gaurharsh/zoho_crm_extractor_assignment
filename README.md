@@ -246,7 +246,7 @@ The indicator also displays the detected module name.
       Complete style isolation
       No interference with Zoho CRM UI
 
-[Video_Demo_Link](https://drive.google.com/file/d/1sZbRK3X5K8o0SVIu2qd4rouVIlvV0toA/view)
+[ Demo Video_Link](https://drive.google.com/file/d/1sZbRK3X5K8o0SVIu2qd4rouVIlvV0toA/view)
 
 #### Author
 ### Harshvardhan Singh Gaur 
