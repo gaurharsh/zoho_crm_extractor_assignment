@@ -1,6 +1,6 @@
-## Zoho CRM Data Extractor – Chrome Extension
+# Zoho CRM Data Extractor – Chrome Extension
 
-### Overview
+## Overview
 
 This project is a **Chrome Extension (Manifest V3)** that extracts data from **Zoho CRM** modules using **DOM scraping (no API calls)**, stores the data locally using `chrome.storage.local`, and displays it in a **React + TailwindCSS popup dashboard**.
 
@@ -14,7 +14,7 @@ This assignment demonstrates:
 
 ---
 
-### Supported Modules
+## Supported Modules
 
 - **Leads**
 - **Contacts**
@@ -24,7 +24,7 @@ This assignment demonstrates:
 
 ---
 
-### Technology Stack
+## Technology Stack
 
 - **Chrome Manifest V3**
   - Service Worker
@@ -37,7 +37,8 @@ This assignment demonstrates:
 
 ---
 
-### Folder Structure
+## Folder Structure 
+
 C:.
 │   .gitignore
 │   eslint.config.js
@@ -82,7 +83,7 @@ C:.
             popup.css
             
 
-### Installation Steps
+## Installation Steps
 
 1. Clone the repository:
    ```bash
@@ -245,14 +246,5 @@ The indicator also displays the detected module name.
       Complete style isolation
       No interference with Zoho CRM UI
 
-
-[Demo_Video_link](https://drive.google.com/file/d/1sZbRK3X5K8o0SVIu2qd4rouVIlvV0toA/view?usp=sharing)
-
 #### Author
 ### Harshvardhan Singh Gaur 
-
-
-
-
-
-
