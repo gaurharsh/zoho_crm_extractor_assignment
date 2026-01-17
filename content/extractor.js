@@ -1,5 +1,5 @@
-(() => {
-  /* ---------- STATUS BADGE ---------- */
+setTimeout(() => {
+  /* ================= STATUS ================= */
   function show(msg) {
     let host = document.getElementById("zoho-status");
     if (!host) {
@@ -8,7 +8,6 @@
       document.body.appendChild(host);
       host.attachShadow({ mode: "open" });
     }
-
     host.shadowRoot.innerHTML = `
       <style>
         div {
@@ -27,79 +26,95 @@
     `;
   }
 
-  /* ---------- DEALS DETECTION (DOM BASED) ---------- */
-  const hasKanban =
-    document.querySelector("lyte-kanban-card") ||
-    document.querySelector("lyte-kanban-view");
+  const uid = () => crypto.randomUUID();
+  const text = el => el?.innerText.trim() || "";
 
-  const hasTable =
-    document.querySelector("table") &&
-    document.querySelector("table tbody tr");
+  /* ============================================================
+     ===================== DEALS (UNTOUCHED) ====================
+     ============================================================ */
+  if (document.querySelector("lyte-card.crm-kv-card")) {
+    const deals = [];
 
-  if (!hasKanban && !hasTable) {
-    show("Deals UI not detected");
-    return;
-  }
+    document.querySelectorAll("lyte-card.crm-kv-card").forEach(card => {
+      const board = card.closest("lyte-board");
+      const name = text(card.querySelector("a.crm-kv-header-link"));
+      if (!name) return;
 
-  show("Extracting Deals...");
-
-  const records = [];
-
-  /* ---------- KANBAN EXTRACTION ---------- */
-  document.querySelectorAll("lyte-kanban-card").forEach(card => {
-    const text = card.innerText.trim();
-    if (!text) return;
-
-    const lines = text
-      .split("\n")
-      .map(l => l.trim())
-      .filter(Boolean);
-
-    records.push({
-      id: crypto.randomUUID(),
-      name: lines[0] || "",
-      stage:
-        card.closest("lyte-kanban-column")
-          ?.querySelector("header")
-          ?.innerText || "",
-      amount:
-        text.match(/(₹|Rs\.|\$)\s?[\d,]+/)?.[0] || "",
-      raw: text
-    });
-  });
-
-  /* ---------- LIST VIEW FALLBACK ---------- */
-  if (!records.length) {
-    document.querySelectorAll("table tbody tr").forEach(row => {
-      const cols = [...row.querySelectorAll("td")]
-        .map(td => td.innerText.trim())
-        .filter(Boolean);
-
-      if (!cols.length) return;
-
-      records.push({
-        id: crypto.randomUUID(),
-        name: cols[0] || "",
-        stage: cols[3] || "",
-        amount: cols[2] || "",
-        raw: cols.join(" | ")
+      deals.push({
+        id: uid(),
+        name,
+        amount:
+          text(card.querySelector(".counterValue")) ||
+          text(card.querySelector(".numberDivCurrencyView")),
+        stage: board?.getAttribute("data-zcqa")?.replace("kanbanHeader_", ""),
+        pipeline: board?.getAttribute("data-pipelines") || "Default",
+        owner: text(card.querySelector("[data-zcqa='recordOwner']")),
+        probability: text(card.querySelector("[cx-prop-value*='%']")),
+        closingDate: text(card.querySelector("crux-date-component"))
       });
     });
-  }
 
-  if (!records.length) {
-    show("0 deals found (wait for UI to load)");
+    chrome.storage.local.get("zoho_data", r => {
+      chrome.storage.local.set({
+        zoho_data: { ...r.zoho_data, deals, lastSync: Date.now() }
+      });
+      show(`Extracted ${deals.length} deals`);
+    });
     return;
   }
 
-  /* ---------- STORAGE ---------- */
-  chrome.storage.local.get("zoho_data", res => {
-    const data = res.zoho_data || {};
-    data.deals = records;
-    data.lastSync = Date.now();
+  /* ============================================================
+     ===================== LEADS (LYTE GRID) ====================
+     ============================================================ */
 
-    chrome.storage.local.set({ zoho_data: data }, () => {
-      show(`Extracted ${records.length} deals`);
+  const headerEls = document.querySelectorAll(".lyteDataviewHeaderCell");
+  const rowEls = document.querySelectorAll(".lyteDataviewRow");
+
+  if (!headerEls.length || !rowEls.length) {
+    show("No supported module detected");
+    return;
+  }
+
+  const headers = [...headerEls].map(h => h.innerText.trim());
+  const leads = [];
+
+  rowEls.forEach(row => {
+    const cells = row.querySelectorAll(".lyteDataviewCell");
+    if (cells.length !== headers.length) return;
+
+    const record = { id: uid() };
+
+    headers.forEach((h, i) => {
+      const v = cells[i]?.innerText.trim() || "";
+
+      if (h === "Lead Name") record.name = v;
+      if (h === "Company") record.company = v;
+      if (h === "Email") record.email = v;
+      if (h === "Phone") record.phone = v;
+      if (h === "Lead Source") record.source = v;
+      if (h === "Lead Status") record.status = v;
+      if (h === "Lead Owner") record.owner = v;
     });
+
+    // 🚫 Skip Zoho UI rows
+    if (
+      !record.name ||
+      record.name.includes("Feedback") ||
+      record.name.includes("Help")
+    ) return;
+
+    leads.push(record);
   });
-})();
+
+  if (!leads.length) {
+    show("0 leads found");
+    return;
+  }
+
+  chrome.storage.local.get("zoho_data", r => {
+    chrome.storage.local.set({
+      zoho_data: { ...r.zoho_data, leads, lastSync: Date.now() }
+    });
+    show(`Extracted ${leads.length} leads`);
+  });
+}, 500);
