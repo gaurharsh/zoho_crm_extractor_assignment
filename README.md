@@ -37,6 +37,51 @@ This assignment demonstrates:
 
 ---
 
+### Folder Structure
+C:.
+│   .gitignore
+│   eslint.config.js
+│   index.css
+│   index.html
+│   manifest.json
+│   package-lock.json
+│   package.json
+│   postcss.config.js
+│   README.md
+│   service-worker.js
+│   tailwind.config.js
+│   tailwind.css
+│   vite.config.js
+│
+├───content
+│       extractor.js
+│
+├───dist
+│   │   popup.html
+│   │   popup.js
+│   │   vite.svg
+│   │
+│   └───assets
+│           popup-C1Rp4Rea.css
+│
+├───public
+│       vite.svg
+│
+└───src
+    │   App.css
+    │   App.jsx
+    │   index.css
+    │   main.jsx
+    │
+    ├───assets
+    │       react.svg
+    │
+    └───popup
+            app.jsx
+            main.jsx
+            popup.css
+            
+
 ### Installation Steps
 
 1. Clone the repository:
