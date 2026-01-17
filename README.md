@@ -206,7 +206,7 @@ The indicator also displays the detected module name.
 
 ⏱️ VIDEO FLOW (3–5 MINUTES TOTAL)
 ________________________________________
-## 1️⃣ INTRO (0:00 – 0:20)
+####  1️⃣ INTRO (0:00 – 0:20)
 🎬 On screen
 •	Show Zoho CRM home page
 •	Don’t click anything yet
@@ -214,7 +214,7 @@ ________________________________________
 Hi, this is a demo of my Zoho CRM Data Extractor Chrome Extension.
 The extension extracts data from Deals, Leads, and Contacts, stores it locally using Chrome storage, and displays everything in a popup dashboard built with React.
 ________________________________________
-##  2️⃣ ARCHITECTURE OVERVIEW (0:20 – 0:45)
+####   2️⃣ ARCHITECTURE OVERVIEW (0:20 – 0:45)
 🎬 On screen
 •	Open chrome://extensions
 •	Click “Details” on your extension briefly
@@ -222,7 +222,7 @@ ________________________________________
 The extension is built using Chrome Manifest V3, with a service worker, on-demand content script injection, and a React-based popup UI.
 Data extraction is done via DOM scraping, without using Zoho APIs.
 ________________________________________
-##  3️⃣ DEALS EXTRACTION – MULTIPLE PIPELINES (0:45 – 1:45)
+####   3️⃣ DEALS EXTRACTION – MULTIPLE PIPELINES (0:45 – 1:45)
 🎬 On screen
 •	Go to Deals
 •	Switch to Kanban view
@@ -239,7 +239,7 @@ Each deal card belongs to a pipeline and stage, and the extractor detects this c
 The extractor captures the deal name, amount, stage, pipeline name, probability, closing date, owner, and related account or contact.
 This works across multiple pipelines, not just the default one.
 ________________________________________
-##  4️⃣ LEADS EXTRACTION (1:45 – 2:30)
+####   4️⃣ LEADS EXTRACTION (1:45 – 2:30)
 🎬 On screen
 •	Navigate to Leads module (list view)
 •	Scroll slightly
@@ -255,7 +255,7 @@ Zoho renders Leads using a Crux table with Lyte components, so I extract data fr
 For Leads, the extension extracts lead name, company, email, phone, lead source, lead status, and lead owner.
 System UI rows are filtered out to avoid junk data.
 ________________________________________
-##  5️⃣ CONTACTS EXTRACTION (2:30 – 3:00)
+####   5️⃣ CONTACTS EXTRACTION (2:30 – 3:00)
 🎬 On screen
 •	Go to Contacts
 •	Open popup
@@ -267,14 +267,14 @@ The same table-based extraction logic is reused for Contacts.
 🎙️ Say this:
 For Contacts, it extracts name, email, phone, account name, contact owner, and mailing address.
 ________________________________________
-##  6️⃣ PAGE REFRESH PERSISTENCE (3:00 – 3:25)
+####  6️⃣ PAGE REFRESH PERSISTENCE (3:00 – 3:25)
 🎬 On screen
 •	Refresh the Zoho page
 •	Open popup again
 🎙️ Say this:
 All extracted data is stored using chrome.storage.local, so it persists even after a page refresh.
 ________________________________________
-##  7️⃣ POPUP DASHBOARD + DELETE FUNCTIONALITY (3:25 – 4:20)
+####  7️⃣ POPUP DASHBOARD + DELETE FUNCTIONALITY (3:25 – 4:20)
 🎬 On screen
 •	Switch between popup tabs
 •	Scroll records
@@ -283,7 +283,7 @@ ________________________________________
 The popup dashboard allows switching between modules, viewing extracted records, and clearing stored data.
 The Clear All Stored Data button resets the local storage, which is useful for repeated extractions during testing.
 ________________________________________
-##  8️⃣ UI & TAILWIND NOTE (4:20 – 4:40)
+####  8️⃣ UI & TAILWIND NOTE (4:20 – 4:40)
 🎙️ Say this (IMPORTANT – EXACT WORDING):
 The popup UI is built with React, and the styling follows Tailwind-style utility patterns.
 Due to build constraints in the Chrome extension environment, I used a CSS-based implementation that mirrors Tailwind utility behavior, while keeping the component structure and design approach the same.
