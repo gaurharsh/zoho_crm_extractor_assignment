@@ -202,60 +202,97 @@ The indicator also displays the detected module name.
 
 
 
-## Demo Video Script (3–5 Minutes)
-
-### 0:00 – 0:25 | Overview
-    “This is a Chrome Extension built using Manifest V3 that extracts data from Zoho CRM modules using DOM scraping, stores the data locally using chrome.storage.local, and displays everything in a React-based popup dashboard.
-    The extension works across multiple CRM modules and supports multiple deal pipelines.”
-
-### 0:25 – 1:10 | Deals Module – Multiple Pipelines
-    “I’m currently on the Deals module in Zoho CRM.
-    Zoho supports multiple pipelines, so I’ll switch between different pipelines to show that context is captured.”
-
-(Switch pipeline to Zoho UI)
-    “Now I’ll click the extension and select Extract Current Module.”
-
-(Click extract)
-    “You can see a Shadow DOM indicator injected into the page showing the extraction status.”
-
-(Open popup)
-    “In the popup dashboard, deals are grouped by pipeline name, and each deal includes stage, amount, probability, and owner.”
-
-### 1:10 – 1:40 | Leads Module
-     Next, I’ll navigate to the Leads module.”
-
-(Open Leads)
-       “I’ll extract the current module again.”
-
-(Click extract)
-       “The popup now shows lead records with fields like name, company, email, status, and owner.”
-
-### 1:40 – 2:05 | Contacts Module
-    “Now I’ll move to the Contacts module.”
-
-(Open Contacts → extract)
-    “Contact details such as name, email, phone, account, and owner are extracted and stored.”
-
-### 2:05 – 2:30 | Page Refresh Persistence
-    “I’ll refresh the Zoho CRM page.”
-
-(Refresh page)
-    “After reopening the extension popup, all previously extracted data is still available, demonstrating local persistence using chrome.storage.local.”
-
-### 2:30 – 2:55 | Popup Dashboard & Delete
-    “From the popup dashboard, I can switch between different modules using tabs.
-    I can also delete individual records.”
-
-(Delete one record)
-    “The UI updates immediately, showing real-time sync across the extension.”
-
-### 2:55 – 3:10 | Wrap-Up
-     “To summarize, this extension supports multiple CRM modules, handles multiple deal pipelines, uses Manifest V3-compliant architecture, ensures storage integrity, and is designed to be easily extendable for additional features.”
 
 
-
-## Author
-### Harshvardhan Singh  Gaur 
-
-
+⏱️ VIDEO FLOW (3–5 MINUTES TOTAL)
+________________________________________
+## 1️⃣ INTRO (0:00 – 0:20)
+🎬 On screen
+•	Show Zoho CRM home page
+•	Don’t click anything yet
+🎙️ Say this:
+Hi, this is a demo of my Zoho CRM Data Extractor Chrome Extension.
+The extension extracts data from Deals, Leads, and Contacts, stores it locally using Chrome storage, and displays everything in a popup dashboard built with React.
+________________________________________
+##  2️⃣ ARCHITECTURE OVERVIEW (0:20 – 0:45)
+🎬 On screen
+•	Open chrome://extensions
+•	Click “Details” on your extension briefly
+🎙️ Say this:
+The extension is built using Chrome Manifest V3, with a service worker, on-demand content script injection, and a React-based popup UI.
+Data extraction is done via DOM scraping, without using Zoho APIs.
+________________________________________
+##  3️⃣ DEALS EXTRACTION – MULTIPLE PIPELINES (0:45 – 1:45)
+🎬 On screen
+•	Go to Deals
+•	Switch to Kanban view
+•	Scroll a bit so multiple stages are visible
+•	Open the extension popup
+🎙️ Say this:
+I’ll start with the Deals module, which is rendered as a Kanban board in Zoho CRM.
+Each deal card belongs to a pipeline and stage, and the extractor detects this context directly from the DOM.
+🎬 On screen
+•	Click “Extract Current Page”
+•	Show black status badge: Extracted X deals
+•	Switch popup tab to “deals”
+🎙️ Say this:
+The extractor captures the deal name, amount, stage, pipeline name, probability, closing date, owner, and related account or contact.
+This works across multiple pipelines, not just the default one.
+________________________________________
+##  4️⃣ LEADS EXTRACTION (1:45 – 2:30)
+🎬 On screen
+•	Navigate to Leads module (list view)
+•	Scroll slightly
+•	Open popup
+🎙️ Say this:
+Next is the Leads module.
+Zoho renders Leads using a Crux table with Lyte components, so I extract data from the rendered table rows rather than relying on URLs.
+🎬 On screen
+•	Click Extract Current Page
+•	Show “Extracted X Leads”
+•	Switch popup tab to “leads”
+🎙️ Say this:
+For Leads, the extension extracts lead name, company, email, phone, lead source, lead status, and lead owner.
+System UI rows are filtered out to avoid junk data.
+________________________________________
+##  5️⃣ CONTACTS EXTRACTION (2:30 – 3:00)
+🎬 On screen
+•	Go to Contacts
+•	Open popup
+🎙️ Say this:
+The same table-based extraction logic is reused for Contacts.
+🎬 On screen
+•	Click Extract Current Page
+•	Switch to “contacts” tab
+🎙️ Say this:
+For Contacts, it extracts name, email, phone, account name, contact owner, and mailing address.
+________________________________________
+##  6️⃣ PAGE REFRESH PERSISTENCE (3:00 – 3:25)
+🎬 On screen
+•	Refresh the Zoho page
+•	Open popup again
+🎙️ Say this:
+All extracted data is stored using chrome.storage.local, so it persists even after a page refresh.
+________________________________________
+##  7️⃣ POPUP DASHBOARD + DELETE FUNCTIONALITY (3:25 – 4:20)
+🎬 On screen
+•	Switch between popup tabs
+•	Scroll records
+•	Click Clear All Stored Data
+🎙️ Say this:
+The popup dashboard allows switching between modules, viewing extracted records, and clearing stored data.
+The Clear All Stored Data button resets the local storage, which is useful for repeated extractions during testing.
+________________________________________
+##  8️⃣ UI & TAILWIND NOTE (4:20 – 4:40)
+🎙️ Say this (IMPORTANT – EXACT WORDING):
+The popup UI is built with React, and the styling follows Tailwind-style utility patterns.
+Due to build constraints in the Chrome extension environment, I used a CSS-based implementation that mirrors Tailwind utility behavior, while keeping the component structure and design approach the same.
+⬆️ This is honest, professional, and safe
+❌ Do NOT say “Tailwind didn’t work”
+✅ Say “Tailwind-style / mirrored”
+________________________________________
+##  9️⃣ CLOSING (4:40 – 5:00)
+🎙️ Say this:
+This concludes the demo of the Zoho CRM Data Extractor.
+Thank you.
 
