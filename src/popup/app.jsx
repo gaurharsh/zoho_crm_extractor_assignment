@@ -13,19 +13,26 @@ export default function App() {
   const [data, setData] = useState({});
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    const load = () =>
-      chrome.storage.local.get("zoho_data", r =>
-        setData(r.zoho_data || {})
-      );
+  /* ---------- LOAD STORAGE ---------- */
+  const loadData = () => {
+    chrome.storage.local.get("zoho_data", r => {
+      setData(r.zoho_data || {});
+    });
+  };
 
-    load();
-    chrome.storage.onChanged.addListener(load);
+  useEffect(() => {
+    loadData();
+    chrome.storage.onChanged.addListener(loadData);
   }, []);
 
+  /* ---------- EXTRACT ---------- */
   const extract = async () => {
     setLoading(true);
-    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+
+    const [tab] = await chrome.tabs.query({
+      active: true,
+      currentWindow: true
+    });
 
     await chrome.scripting.executeScript({
       target: { tabId: tab.id },
@@ -35,13 +42,32 @@ export default function App() {
     setTimeout(() => setLoading(false), 1200);
   };
 
+  /* ---------- CLEAR STORAGE ---------- */
+  const clearAll = () => {
+    if (!confirm("Clear all extracted Zoho CRM data?")) return;
+
+    chrome.storage.local.set(
+      {
+        zoho_data: {
+          deals: [],
+          leads: [],
+          contacts: [],
+          accounts: [],
+          tasks: [],
+          lastSync: null
+        }
+      },
+      loadData
+    );
+  };
+
   const records = data[active] || [];
 
   return (
-    <div className="w-80 p-3 text-xs font-sans">
+    <div className="w-80 p-3 text-xs font-sans bg-white">
       {/* Header */}
       <h1 className="text-sm font-semibold mb-2">
-        Zoho CRM Extractor
+        Zoho CRM Data Extractor
       </h1>
 
       {/* Tabs */}
@@ -53,7 +79,7 @@ export default function App() {
             className={`px-2 py-1 rounded border ${
               active === m.key
                 ? "bg-blue-600 text-white"
-                : "bg-white text-gray-700"
+                : "bg-gray-100 text-gray-700"
             }`}
           >
             {m.label}
@@ -61,32 +87,32 @@ export default function App() {
         ))}
       </div>
 
-      {/* Extract button */}
+      {/* Extract Button */}
       <button
         onClick={extract}
         disabled={loading}
         className="w-full bg-blue-600 text-white py-1.5 rounded mb-2 disabled:opacity-60"
       >
-        {loading ? "Extracting…" : `Extract ${active}`}
+        {loading ? "Extracting…" : "Extract Current Page"}
       </button>
 
-      {/* Last sync */}
+      {/* Last Sync */}
       {data.lastSync && (
         <div className="text-gray-500 mb-2">
           Last sync: {new Date(data.lastSync).toLocaleTimeString()}
         </div>
       )}
 
-      {/* Data */}
-      <div className="border rounded p-2 max-h-64 overflow-auto">
+      {/* Data View */}
+      <div className="border rounded p-2 max-h-60 overflow-auto mb-2">
         {!records.length && (
           <div className="text-gray-400">
-            No {active} data
+            No {active} data yet
           </div>
         )}
 
         {records.map((r, i) => (
-          <div key={i} className="mb-2 border-b pb-1">
+          <div key={r.id || i} className="mb-2 border-b pb-1">
             <div className="font-medium">
               {r.name || r.subject}
             </div>
@@ -96,6 +122,14 @@ export default function App() {
           </div>
         ))}
       </div>
+
+      {/* Clear Button */}
+      <button
+        onClick={clearAll}
+        className="w-full bg-red-100 text-red-600 py-1 rounded"
+      >
+        Clear All Stored Data
+      </button>
     </div>
   );
 }

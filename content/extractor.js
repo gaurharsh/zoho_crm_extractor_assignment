@@ -27,11 +27,12 @@ setTimeout(() => {
   }
 
   const uid = () => crypto.randomUUID();
-  const text = el => el?.innerText.trim() || "";
+  const text = el => el?.innerText?.trim() || "";
 
-  /* ============================================================
-     ===================== DEALS (UNTOUCHED) ====================
-     ============================================================ */
+  /* ======================================================
+     ================= DEALS / TASKS (KANBAN) ==============
+     ================= UNTOUCHED ===========================
+     ====================================================== */
   if (document.querySelector("lyte-card.crm-kv-card")) {
     const deals = [];
 
@@ -48,73 +49,111 @@ setTimeout(() => {
           text(card.querySelector(".numberDivCurrencyView")),
         stage: board?.getAttribute("data-zcqa")?.replace("kanbanHeader_", ""),
         pipeline: board?.getAttribute("data-pipelines") || "Default",
-        owner: text(card.querySelector("[data-zcqa='recordOwner']")),
         probability: text(card.querySelector("[cx-prop-value*='%']")),
-        closingDate: text(card.querySelector("crux-date-component"))
+        closingDate: text(card.querySelector("crux-date-component")),
+        owner: text(card.querySelector("[data-zcqa='recordOwner']")),
+        related:
+          text(card.querySelector("a[href*='/Accounts/']")) ||
+          text(card.querySelector("a[href*='/Contacts/']"))
       });
     });
 
     chrome.storage.local.get("zoho_data", r => {
       chrome.storage.local.set({
-        zoho_data: { ...r.zoho_data, deals, lastSync: Date.now() }
+        zoho_data: { ...(r.zoho_data || {}), deals, lastSync: Date.now() }
       });
       show(`Extracted ${deals.length} deals`);
     });
     return;
   }
 
-  /* ============================================================
-     ===================== LEADS (LYTE GRID) ====================
-     ============================================================ */
+  /* ======================================================
+     ========== LEADS / CONTACTS / ACCOUNTS (CRUX TABLE) ===
+     ====================================================== */
 
-  const headerEls = document.querySelectorAll(".lyteDataviewHeaderCell");
-  const rowEls = document.querySelectorAll(".lyteDataviewRow");
-
-  if (!headerEls.length || !rowEls.length) {
+  const crux = document.querySelector("crux-table-component");
+  if (!crux) {
     show("No supported module detected");
     return;
   }
 
-  const headers = [...headerEls].map(h => h.innerText.trim());
-  const leads = [];
+  const module = crux.getAttribute("cx-prop-module");
+  if (!["Leads", "Contacts", "Accounts"].includes(module)) {
+    show("Unsupported module");
+    return;
+  }
 
-  rowEls.forEach(row => {
-    const cells = row.querySelectorAll(".lyteDataviewCell");
-    if (cells.length !== headers.length) return;
+  show(`Extracting ${module}...`);
+
+  /* ---------- HEADERS ---------- */
+  const headers = Array.from(
+    crux.querySelectorAll(
+      'lyte-exptable-tr#listviewHeaderRow lyte-exptable-th lyte-text'
+    )
+  ).map(h => h.innerText.trim());
+
+  /* ---------- ROWS ---------- */
+  const rows = crux.querySelectorAll(
+    'lyte-exptable-tr[data-zcqa="detailView"]'
+  );
+
+  if (!headers.length || !rows.length) {
+    show("No records found");
+    return;
+  }
+
+  const records = [];
+
+  rows.forEach(row => {
+    const cells = Array.from(row.querySelectorAll("lyte-exptable-td"));
+    if (cells.length < headers.length) return;
 
     const record = { id: uid() };
 
     headers.forEach((h, i) => {
-      const v = cells[i]?.innerText.trim() || "";
+      const v = text(cells[i]);
 
-      if (h === "Lead Name") record.name = v;
-      if (h === "Company") record.company = v;
-      if (h === "Email") record.email = v;
-      if (h === "Phone") record.phone = v;
-      if (h === "Lead Source") record.source = v;
-      if (h === "Lead Status") record.status = v;
-      if (h === "Lead Owner") record.owner = v;
+      if (module === "Leads") {
+        if (h === "Lead Name") record.name = v;
+        if (h === "Company") record.company = v;
+        if (h === "Email") record.email = v;
+        if (h === "Phone") record.phone = v;
+        if (h === "Lead Source") record.source = v;
+        if (h === "Lead Status") record.status = v;
+        if (h === "Lead Owner") record.owner = v;
+      }
+
+      if (module === "Contacts") {
+        if (h === "Contact Name") record.name = v;
+        if (h === "Email") record.email = v;
+        if (h === "Phone") record.phone = v;
+        if (h === "Account Name") record.account = v;
+        if (h === "Contact Owner") record.owner = v;
+        if (h.includes("Mailing")) record.address = v;
+      }
+
+      if (module === "Accounts") {
+        if (h === "Account Name") record.name = v;
+        if (h === "Website") record.website = v;
+        if (h === "Phone") record.phone = v;
+        if (h === "Industry") record.industry = v;
+        if (h === "Account Owner") record.owner = v;
+        if (h.includes("Revenue")) record.revenue = v;
+      }
     });
 
-    // 🚫 Skip Zoho UI rows
-    if (
-      !record.name ||
-      record.name.includes("Feedback") ||
-      record.name.includes("Help")
-    ) return;
-
-    leads.push(record);
+    if (!record.name) return;
+    records.push(record);
   });
-
-  if (!leads.length) {
-    show("0 leads found");
-    return;
-  }
 
   chrome.storage.local.get("zoho_data", r => {
     chrome.storage.local.set({
-      zoho_data: { ...r.zoho_data, leads, lastSync: Date.now() }
+      zoho_data: {
+        ...(r.zoho_data || {}),
+        [module.toLowerCase()]: records,
+        lastSync: Date.now()
+      }
     });
-    show(`Extracted ${leads.length} leads`);
+    show(`Extracted ${records.length} ${module}`);
   });
-}, 500);
+}, 600);
