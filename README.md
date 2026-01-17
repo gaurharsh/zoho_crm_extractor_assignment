@@ -54,30 +54,30 @@ C:.
 │   tailwind.css
 │   vite.config.js
 │
-├───content
+├───content/
 │       extractor.js
 │
-├───dist
+├───dist/
 │   │   popup.html
 │   │   popup.js
 │   │   vite.svg
 │   │
-│   └───assets
+│   └───assets/
 │           popup-C1Rp4Rea.css
 │
-├───public
+├───public/
 │       vite.svg
 │
-└───src
+└───src/
     │   App.css
     │   App.jsx
     │   index.css
     │   main.jsx
     │
-    ├───assets
+    ├───assets/
     │       react.svg
     │
-    └───popup
+    └───popup/
             app.jsx
             main.jsx
             popup.css
