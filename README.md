@@ -80,7 +80,7 @@ This assignment demonstrates:
     └───popup
             app.jsx
             main.jsx
-            popup.css
+            popup.css```
             
 
 ## Installation Steps
