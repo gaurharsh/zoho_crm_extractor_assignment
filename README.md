@@ -88,7 +88,7 @@ This assignment demonstrates:
 
 1. Clone the repository:
    ```bash
-   git clone <your-github-repo-url>
+   git clone https://github.com/gaurharsh/zoho_crm_extractor_assignment
 
 2. Install dependencies:
     ```bash
